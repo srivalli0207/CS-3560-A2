@@ -9,12 +9,14 @@ public class TwitterService
     private Map<String, User> users;
     private Map<String, UserGroup> groups;
     private List<TwitterUpdateListener> listeners;
+    private int totalTweetsCount;
 
     private TwitterService() 
     {
         users = new HashMap<>();
         groups = new HashMap<>();
         listeners = new ArrayList<>();
+        totalTweetsCount = 0;
         // Initialize root group
         groups.put("Root", new UserGroup("Root"));
     }
@@ -85,13 +87,12 @@ public class TwitterService
         return groups.get(groupId);
     }
 
-    public void postTweet(String userId, String message)
-    {
+    public void postTweet(String userId, String message) {
         if (users.containsKey(userId)) 
         {
             User user = users.get(userId);
             user.postTweet(message, this);
-            updateFollowersNewsFeed(userId, message);
+            totalTweetsCount++; // Increment total tweets count
         }
     }
 
@@ -142,6 +143,10 @@ public class TwitterService
     public void removeListener(TwitterUpdateListener listener) 
     {
         listeners.remove(listener);
+    }
+    
+    public int getTotalTweetsCount() {
+        return totalTweetsCount;
     }
     
     public int getTotalTweets() {
